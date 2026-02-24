@@ -18,6 +18,14 @@ async function apiRequest(endpoint, method = 'GET', data = null, params = null) 
         headers: { 'Content-Type': 'application/json' }
     };
 
+    // Add auth token to all requests (except login itself)
+    if (!endpoint.startsWith('/auth') || method !== 'POST') {
+        const token = localStorage.getItem('iapmlg_auth_token');
+        if (token) {
+            options.headers['X-Auth-Token'] = token;
+        }
+    }
+
     if (data && method !== 'GET') {
         options.body = JSON.stringify(data);
     }
@@ -35,6 +43,14 @@ async function apiRequest(endpoint, method = 'GET', data = null, params = null) 
 // ==================== INIT ====================
 const Api = {
     initDb: () => apiRequest('/init-db', 'POST'),
+
+    // ==================== AUTH ====================
+    auth: {
+        login: (username, password) => apiRequest('/auth', 'POST', { username, password }),
+        verify: (token) => apiRequest(`/auth?token=${token}`, 'GET'),
+        changeCredentials: (token, newUsername, newPassword) =>
+            apiRequest('/auth', 'PUT', { token, newUsername, newPassword }),
+    },
 
     // ==================== MULTAS ====================
     multas: {

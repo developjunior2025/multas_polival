@@ -33,8 +33,8 @@ function navigateTo(page, data = null) {
     }
 }
 
-// ==================== INIT ====================
-document.addEventListener('DOMContentLoaded', async () => {
+// ==================== INIT APP (called after login) ====================
+function initApp() {
     // Set current date in topbar
     const dateEl = document.getElementById('current-date');
     if (dateEl) {
@@ -46,6 +46,19 @@ document.addEventListener('DOMContentLoaded', async () => {
             day: 'numeric'
         }).replace(/^\w/, c => c.toUpperCase());
     }
+
+    // Update user display
+    const usernameEl = document.getElementById('sidebar-username');
+    if (usernameEl) usernameEl.textContent = Auth.getUser();
+
+    // Logout button
+    document.getElementById('btn-logout')?.addEventListener('click', () => {
+        confirmDialog(
+            'Cerrar Sesión',
+            '¿Está seguro que desea cerrar la sesión del sistema?',
+            () => Auth.logout()
+        );
+    });
 
     // Sidebar toggle for mobile
     document.getElementById('sidebar-toggle')?.addEventListener('click', () => {
@@ -73,15 +86,58 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     });
 
-    // Auto-init DB on first load (silently)
-    try {
-        await Api.initDb();
-    } catch (e) {
-        console.warn('DB init warning:', e.message);
-    }
-
     // Navigate to dashboard
     navigateTo('dashboard');
+
+    // Load logo from config
+    loadSidebarLogo();
+}
+
+// ==================== SIDEBAR LOGO ====================
+async function loadSidebarLogo() {
+    try {
+        const config = await Api.configuracion.get();
+        if (config.logo_base64) {
+            updateSidebarLogo(config.logo_base64);
+        }
+    } catch (e) {
+        // ignore - logo is optional
+    }
+}
+
+function updateSidebarLogo(base64) {
+    const shieldEl = document.getElementById('sidebar-shield');
+    if (shieldEl && base64) {
+        shieldEl.innerHTML = `<img src="${base64}" alt="Logo IAPMLG" 
+            style="width:44px;height:52px;object-fit:contain;border-radius:4px;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.4))">`;
+    }
+}
+
+// ==================== MAIN INIT ====================
+document.addEventListener('DOMContentLoaded', async () => {
+    // Always init login form listeners
+    initLoginForm();
+
+    // Check if already logged in
+    if (Auth.isLoggedIn()) {
+        // Verify token is still valid
+        const valid = await Auth.verify();
+        if (valid) {
+            showApp(Auth.getUser());
+            // Auto-init DB (silently)
+            try {
+                await Api.initDb();
+            } catch (e) {
+                console.warn('DB init warning:', e.message);
+            }
+            initApp();
+        } else {
+            Auth.clearSession();
+            showLoginScreen();
+        }
+    } else {
+        showLoginScreen();
+    }
 });
 
 // ==================== KEYBOARD SHORTCUTS ====================
@@ -90,8 +146,8 @@ document.addEventListener('keydown', (e) => {
         closeModal();
     }
 
-    // Ctrl+N = New multa
-    if (e.ctrlKey && e.key === 'n') {
+    // Ctrl+N = New multa (only if logged in)
+    if (e.ctrlKey && e.key === 'n' && Auth.isLoggedIn()) {
         e.preventDefault();
         navigateTo('nueva-multa');
     }
