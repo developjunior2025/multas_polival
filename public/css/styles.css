@@ -86,10 +86,16 @@ input, select, textarea { font-family: inherit; }
   border-bottom: 1px solid rgba(201, 168, 76, 0.15);
 }
 
-.sidebar__logo-shield svg {
-  width: 44px;
-  height: 52px;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
+.sidebar__logo-img {
+  flex-shrink: 0;
+}
+
+.sidebar__logo-img-el {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5));
+  border-radius: 4px;
 }
 
 .sidebar__logo-text {
@@ -1111,15 +1117,18 @@ textarea.form-control {
   margin-bottom: 28px;
 }
 
-.login-shield {
-  width: 80px;
-  height: 96px;
-  filter: drop-shadow(0 4px 16px rgba(201, 168, 76, 0.4));
+.login-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.login-shield svg {
-  width: 100%;
-  height: 100%;
+.login-logo__img {
+  width: 130px;
+  height: 130px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 20px rgba(201, 168, 76, 0.45));
+  border-radius: 8px;
 }
 
 .login-org-info {
