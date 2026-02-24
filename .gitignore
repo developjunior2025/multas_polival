@@ -1,0 +1,13 @@
+# Local Netlify folder
+.netlify
+
+# Dependencies
+node_modules/
+
+# Environment variables (NEVER commit this)
+.env
+.env.local
+
+# Logs
+*.log
+npm-debug.log*

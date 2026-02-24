@@ -1,0 +1,6 @@
+/api/init-db /.netlify/functions/init-db 200
+/api/multas /.netlify/functions/multas 200
+/api/articulos /.netlify/functions/articulos 200
+/api/estadisticas /.netlify/functions/estadisticas 200
+/api/configuracion /.netlify/functions/configuracion 200
+/* /index.html 200

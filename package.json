@@ -1,0 +1,16 @@
+{
+  "name": "multas-poliguayos",
+  "version": "1.0.0",
+  "description": "Sistema de Gestión de Multas - Instituto Autónomo de Policía del Municipio Los Guayos",
+  "scripts": {
+    "dev": "netlify dev",
+    "build": "echo 'Static site - no build needed'"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^0.10.4",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "netlify-cli": "^17.0.0"
+  }
+}
