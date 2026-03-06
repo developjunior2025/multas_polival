@@ -83,4 +83,17 @@ const Api = {
         get: () => apiRequest('/configuracion', 'GET'),
         update: (data) => apiRequest('/configuracion', 'PUT', data),
     },
+
+    // ==================== CIERRES DE CAJA ====================
+    cierres: {
+        resumenActual: (params = {}) => apiRequest('/cierres', 'GET', null, { tipo: 'resumen_actual', ...params }),
+        pendientesHistoricas: (params = {}) => apiRequest('/cierres', 'GET', null, { tipo: 'pendientes_historicas', ...params }),
+        historial: (params = {}) => apiRequest('/cierres', 'GET', null, { tipo: 'historial', ...params }),
+        guardar: (data) => apiRequest('/cierres', 'POST', data),
+    },
+
+    // ==================== TASA DÓLAR (BCV) ====================
+    tasaDolar: {
+        get: () => apiRequest('/tasa-dolar', 'GET'),
+    },
 };

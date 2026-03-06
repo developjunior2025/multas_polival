@@ -303,6 +303,14 @@ async function renderNuevaMulta(multaEditable = null) {
         e.preventDefault();
         await submitMultaForm(isEdit, m.id);
     });
+
+    // Inyectar tasa BCV en campo TCMMV (si no es edición con valor ya cargado)
+    inyectarTasaEnFormulario();
+
+    // Marcar importe como manual si el usuario lo edita
+    document.getElementById('f-importe')?.addEventListener('input', function () {
+        this.dataset.autoCalc = 'false';
+    });
 }
 
 async function submitMultaForm(isEdit, multaId) {

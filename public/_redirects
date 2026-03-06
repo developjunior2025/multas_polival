@@ -4,5 +4,7 @@
 /api/articulos /.netlify/functions/articulos 200
 /api/estadisticas /.netlify/functions/estadisticas 200
 /api/configuracion /.netlify/functions/configuracion 200
+/api/cierres /.netlify/functions/cierres 200
+/api/tasa-dolar /.netlify/functions/tasa-dolar 200
 /* /index.html 200
 

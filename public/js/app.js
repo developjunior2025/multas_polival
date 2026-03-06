@@ -7,6 +7,7 @@ const routes = {
     'multas': { render: renderMultas, title: 'Actas de Infracción' },
     'historico': { render: renderHistorico, title: 'Histórico' },
     'articulos': { render: renderArticulos, title: 'Artículos' },
+    'cierre-caja': { render: renderCierreCaja, title: 'Cierre de Caja' },
     'configuracion': { render: renderConfiguracion, title: 'Configuración' },
 };
 
@@ -91,6 +92,9 @@ function initApp() {
 
     // Load logo from config
     loadSidebarLogo();
+
+    // Init widget tasa dólar BCV
+    initDolarWidget();
 }
 
 // ==================== SIDEBAR LOGO ====================

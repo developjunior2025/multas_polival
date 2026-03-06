@@ -155,6 +155,17 @@
             </a>
           </li>
           <li class="sidebar__item">
+            <a href="#" class="sidebar__link" data-page="cierre-caja" id="nav-cierre-caja">
+              <svg class="sidebar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                <path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/>
+                <line x1="12" y1="12" x2="12" y2="16"/>
+                <line x1="10" y1="14" x2="14" y2="14"/>
+              </svg>
+              <span>Cierre de Caja</span>
+            </a>
+          </li>
+          <li class="sidebar__item">
             <a href="#" class="sidebar__link" data-page="configuracion" id="nav-configuracion">
               <svg class="sidebar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="12" cy="12" r="3"/>
@@ -198,6 +209,26 @@
         </button>
         <div class="topbar__title" id="page-title">Dashboard</div>
         <div class="topbar__actions">
+          <!-- Widget Tasa Dólar BCV -->
+          <div class="dolar-widget" id="dolar-widget" title="Tasa del Dólar Oficial (BCV) - Haga clic para actualizar">
+            <div class="dolar-widget__flag">🇻🇪</div>
+            <div class="dolar-widget__content">
+              <div class="dolar-widget__label">BCV Oficial</div>
+              <div class="dolar-widget__tasa" id="dolar-tasa-oficial">
+                <div class="spinner" style="width:12px;height:12px;border-width:2px"></div>
+              </div>
+            </div>
+            <div class="dolar-widget__sep"></div>
+            <div class="dolar-widget__content">
+              <div class="dolar-widget__label">Paralelo</div>
+              <div class="dolar-widget__tasa dolar-widget__tasa--paralelo" id="dolar-tasa-paralelo">—</div>
+            </div>
+            <button class="dolar-widget__refresh" id="dolar-refresh-btn" title="Actualizar tasa">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/>
+              </svg>
+            </button>
+          </div>
           <span class="topbar__date" id="current-date"></span>
         </div>
       </header>
@@ -235,6 +266,8 @@
   <script src="js/pages/historico.js"></script>
   <script src="js/pages/articulos.js"></script>
   <script src="js/pages/configuracion.js"></script>
+  <script src="js/pages/cierre-caja.js"></script>
+  <script src="js/tasa-dolar.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
