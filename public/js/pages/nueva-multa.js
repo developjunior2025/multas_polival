@@ -44,9 +44,27 @@ async function renderNuevaMulta(multaEditable = null) {
         </div>
         <div class="form-grid form-grid--4">
           <div class="form-group">
+            <label class="form-label">N° Acta</label>
+            ${isEdit ? `
+              <input type="text" class="form-control" id="f-numero-acta" name="numero_acta"
+                value="${m.numero_acta || ''}" readonly
+                style="background:var(--clr-bg-light,#f5f5f5);cursor:not-allowed;font-weight:700;letter-spacing:1px">
+            ` : `
+              <div class="flex gap-8" style="align-items:center">
+                <select class="form-control" id="f-acta-modo" style="flex:0 0 120px">
+                  <option value="auto">Automático</option>
+                  <option value="manual">Manual</option>
+                </select>
+                <input type="text" class="form-control" id="f-numero-acta" name="numero_acta"
+                  disabled placeholder="000001" maxlength="20"
+                  style="font-weight:700;letter-spacing:1px">
+              </div>
+            `}
+          </div>
+          <div class="form-group">
             <label class="form-label">Fecha <span class="required">*</span></label>
             <input type="date" class="form-control" id="f-fecha" name="fecha" 
-              value="${m.fecha || todayStr()}" required>
+              value="${m.fecha ? m.fecha.substring(0,10) : todayStr()}" required>
           </div>
           <div class="form-group">
             <label class="form-label">Hora</label>
@@ -274,6 +292,23 @@ async function renderNuevaMulta(multaEditable = null) {
     </form>
   `;
 
+    // Modo número de acta: automático / manual
+    if (!isEdit) {
+        const modoSelect = document.getElementById('f-acta-modo');
+        const numeroInput = document.getElementById('f-numero-acta');
+        modoSelect?.addEventListener('change', function () {
+            if (this.value === 'manual') {
+                numeroInput.disabled = false;
+                numeroInput.required = true;
+                numeroInput.focus();
+            } else {
+                numeroInput.disabled = true;
+                numeroInput.required = false;
+                numeroInput.value = '';
+            }
+        });
+    }
+
     // Article select handler
     document.getElementById('f-articulo-id')?.addEventListener('change', function () {
         const opt = this.options[this.selectedIndex];
@@ -319,6 +354,21 @@ async function submitMultaForm(isEdit, multaId) {
     btn.innerHTML = '<div class="spinner" style="width:16px;height:16px;border-width:2px;"></div> Guardando...';
 
     try {
+        // Determinar si el número de acta es manual
+        const modoSelect = document.getElementById('f-acta-modo');
+        const numeroActaInput = document.getElementById('f-numero-acta');
+        const numeroActaManual = (modoSelect && modoSelect.value === 'manual')
+            ? numeroActaInput?.value.trim()
+            : null;
+
+        // Validar número manual si está en modo manual (solo en crear)
+        if (!isEdit && modoSelect?.value === 'manual' && !numeroActaManual) {
+            showToast('warning', 'N° Acta requerido', 'Ingrese el número de acta o cambie a modo Automático');
+            btn.disabled = false;
+            btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/></svg> Registrar Multa`;
+            return;
+        }
+
         const data = {
             fecha: document.getElementById('f-fecha').value,
             hora: document.getElementById('f-hora').value,
@@ -345,6 +395,8 @@ async function submitMultaForm(isEdit, multaId) {
             funcionario: document.getElementById('f-funcionario').value.trim(),
             ci_funcionario: document.getElementById('f-ci-funcionario').value.trim(),
             estado: document.getElementById('f-estado').value,
+            // Solo enviar numero_acta_manual si es modo manual y es nuevo registro
+            ...(numeroActaManual ? { numero_acta_manual: numeroActaManual } : {}),
         };
 
         let result;

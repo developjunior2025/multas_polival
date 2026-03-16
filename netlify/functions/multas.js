@@ -46,19 +46,14 @@ exports.handler = async (event, context) => {
         if (event.httpMethod === 'POST') {
             const body = JSON.parse(event.body || '{}');
 
-            // Get next acta number
-            const configRow = await sql`
-        SELECT valor FROM configuracion WHERE clave = 'ultimo_numero_acta'
-      `;
-            const nextNum = (parseInt(configRow[0]?.valor || '0') + 1).toString().padStart(6, '0');
-
             const {
                 fecha, hora, turno, direccion_infraccion,
                 nombres, apellidos, cedula, telefono, direccion_infractor,
                 marca, modelo, anio, tipo, color, matricula,
                 articulo_id, articulo_numero, articulo_literal, descripcion_infraccion,
                 valor_ut, valor_tcmmv, importe_multa_bs,
-                funcionario, ci_funcionario, estado
+                funcionario, ci_funcionario, estado,
+                numero_acta_manual
             } = body;
 
             if (!nombres || !apellidos || !cedula || !fecha || !direccion_infraccion) {
@@ -66,6 +61,28 @@ exports.handler = async (event, context) => {
                     statusCode: 400, headers,
                     body: JSON.stringify({ error: 'Campos requeridos: nombres, apellidos, cédula, fecha, dirección de infracción' })
                 };
+            }
+
+            let nextNum;
+
+            if (numero_acta_manual && numero_acta_manual.trim() !== '') {
+                // --- Modo MANUAL: usar el número provisto ---
+                nextNum = numero_acta_manual.trim();
+
+                // Verificar que no exista ya una multa con ese número
+                const existing = await sql`SELECT id FROM multas WHERE numero_acta = ${nextNum}`;
+                if (existing.length > 0) {
+                    return {
+                        statusCode: 409, headers,
+                        body: JSON.stringify({ error: `Ya existe un acta con el número ${nextNum}. Por favor, use un número diferente.` })
+                    };
+                }
+            } else {
+                // --- Modo AUTOMÁTICO: obtener el siguiente número ---
+                const configRow = await sql`
+          SELECT valor FROM configuracion WHERE clave = 'ultimo_numero_acta'
+        `;
+                nextNum = (parseInt(configRow[0]?.valor || '0') + 1).toString().padStart(6, '0');
             }
 
             const rows = await sql`
@@ -87,11 +104,13 @@ exports.handler = async (event, context) => {
         RETURNING *
       `;
 
-            // Update last acta number
-            await sql`
-        UPDATE configuracion SET valor = ${nextNum}, updated_at = NOW()
-        WHERE clave = 'ultimo_numero_acta'
-      `;
+            // Actualizar el contador solo si fue modo automático
+            if (!numero_acta_manual || numero_acta_manual.trim() === '') {
+                await sql`
+          UPDATE configuracion SET valor = ${nextNum}, updated_at = NOW()
+          WHERE clave = 'ultimo_numero_acta'
+        `;
+            }
 
             return { statusCode: 201, headers, body: JSON.stringify(rows[0]) };
         }

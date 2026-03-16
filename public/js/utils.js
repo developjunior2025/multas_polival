@@ -59,7 +59,18 @@ function closeModal() {
 // ==================== FORMAT DATES ====================
 function formatDate(dateStr) {
     if (!dateStr) return '—';
-    const d = new Date(dateStr + 'T00:00:00');
+    // Normalizar: si viene con zona horaria o como timestamp, extraer YYYY-MM-DD
+    let datePart = dateStr;
+    if (typeof dateStr === 'string') {
+        // Puede venir como '2026-03-16T00:00:00.000Z' o '2026-03-16'
+        datePart = dateStr.substring(0, 10);
+    } else if (dateStr instanceof Date) {
+        // Si es objeto Date, convertir a ISO y tomar la parte de fecha
+        datePart = dateStr.toISOString().substring(0, 10);
+    }
+    // Usar T12:00:00 para evitar problemas de zona horaria (UTC-4)
+    const d = new Date(datePart + 'T12:00:00');
+    if (isNaN(d.getTime())) return dateStr; // fallback: mostrar valor original
     return d.toLocaleDateString('es-VE', { day: '2-digit', month: '2-digit', year: 'numeric' });
 }
 
