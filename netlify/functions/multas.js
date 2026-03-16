@@ -1,6 +1,24 @@
 // netlify/functions/multas.js
 const { getDb } = require('./db');
 
+// Normaliza una multa: convierte el campo fecha (que Neon puede devolver como objeto Date)
+// a string 'YYYY-MM-DD' para evitar problemas de zona horaria en el frontend.
+function normalizeMulta(m) {
+    if (!m) return m;
+    if (m.fecha) {
+        if (m.fecha instanceof Date) {
+            // Usar getUTCFullYear/Month/Date para que no cambie el día por timezone
+            const y = m.fecha.getUTCFullYear();
+            const mo = String(m.fecha.getUTCMonth() + 1).padStart(2, '0');
+            const d = String(m.fecha.getUTCDate()).padStart(2, '0');
+            m.fecha = `${y}-${mo}-${d}`;
+        } else if (typeof m.fecha === 'string' && m.fecha.length > 10) {
+            m.fecha = m.fecha.substring(0, 10);
+        }
+    }
+    return m;
+}
+
 exports.handler = async (event, context) => {
     const headers = {
         'Access-Control-Allow-Origin': '*',
@@ -26,7 +44,7 @@ exports.handler = async (event, context) => {
           LEFT JOIN articulos a ON m.articulo_id = a.id
           WHERE m.id = ${id}
         `;
-                return { statusCode: 200, headers, body: JSON.stringify(rows[0] || null) };
+                return { statusCode: 200, headers, body: JSON.stringify(normalizeMulta(rows[0] || null)) };
             }
 
             const pageNum = parseInt(page || '1');
@@ -112,7 +130,7 @@ exports.handler = async (event, context) => {
         `;
             }
 
-            return { statusCode: 201, headers, body: JSON.stringify(rows[0]) };
+            return { statusCode: 201, headers, body: JSON.stringify(normalizeMulta(rows[0])) };
         }
 
         if (event.httpMethod === 'PUT') {
@@ -147,7 +165,7 @@ exports.handler = async (event, context) => {
         WHERE id = ${id}
         RETURNING *
       `;
-            return { statusCode: 200, headers, body: JSON.stringify(rows[0]) };
+            return { statusCode: 200, headers, body: JSON.stringify(normalizeMulta(rows[0])) };
         }
 
         if (event.httpMethod === 'DELETE') {
@@ -211,7 +229,7 @@ async function buildFilteredQuery(sql, filters, limitNum, offset) {
     }
 
     return {
-        data: dataRows,
+        data: dataRows.map(normalizeMulta),
         total: parseInt(totalRows[0].count),
         page: Math.floor(offset / limitNum) + 1,
         limit: limitNum
