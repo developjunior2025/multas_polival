@@ -82,6 +82,7 @@ async function renderNuevaMulta(multaEditable = null) {
             <label class="form-label">Estado</label>
             <select class="form-control" id="f-estado" name="estado">
               <option value="PENDIENTE" ${(m.estado || 'PENDIENTE') === 'PENDIENTE' ? 'selected' : ''}>PENDIENTE</option>
+              <option value="ABONADO" ${m.estado === 'ABONADO' ? 'selected' : ''}>ABONADO</option>
               <option value="PAGADO" ${m.estado === 'PAGADO' ? 'selected' : ''}>PAGADO</option>
               <option value="ANULADO" ${m.estado === 'ANULADO' ? 'selected' : ''}>ANULADO</option>
             </select>

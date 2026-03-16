@@ -161,8 +161,9 @@ const Icons = {
 function statusBadge(estado) {
     const map = {
         'PENDIENTE': { cls: 'pendiente', label: 'PENDIENTE' },
-        'PAGADO': { cls: 'pagado', label: 'PAGADO' },
-        'ANULADO': { cls: 'anulado', label: 'ANULADO' },
+        'ABONADO':   { cls: 'abonado',   label: 'ABONADO'   },
+        'PAGADO':    { cls: 'pagado',    label: 'PAGADO'    },
+        'ANULADO':   { cls: 'anulado',   label: 'ANULADO'   },
     };
     const s = map[estado] || { cls: 'pendiente', label: estado || 'PENDIENTE' };
     return `<span class="badge badge--${s.cls}">${s.label}</span>`;

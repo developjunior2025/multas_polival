@@ -36,6 +36,7 @@ async function renderMultas() {
           <select class="filter-select" id="filter-estado">
             <option value="">— Estado —</option>
             <option value="PENDIENTE">PENDIENTE</option>
+            <option value="ABONADO">ABONADO</option>
             <option value="PAGADO">PAGADO</option>
             <option value="ANULADO">ANULADO</option>
           </select>

@@ -618,6 +618,7 @@ textarea.form-control {
 }
 
 .badge--pendiente { background: var(--clr-warning-bg); color: var(--clr-warning); }
+.badge--abonado   { background: #dbeafe; color: #1d4ed8; }
 .badge--pagado { background: var(--clr-success-bg); color: var(--clr-success); }
 .badge--anulado { background: #f3f4f6; color: #6b7280; }
 .badge--activo { background: var(--clr-success-bg); color: var(--clr-success); }
