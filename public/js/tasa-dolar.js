@@ -1,5 +1,5 @@
 /* js/tasa-dolar.js
-   Gestión de la tasa del Dólar Oficial (BCV) y Paralelo
+   Gestión de la tasa del Euro Oficial (BCV) y Paralelo
    - Widget en topbar
    - Cache en memoria con TTL de 1 hora
    - Autocompletar campo TCMMV en formulario de nueva multa
@@ -53,7 +53,7 @@ const TasaDolar = (() => {
         return new Intl.NumberFormat('es-VE', {
             minimumFractionDigits: 2,
             maximumFractionDigits: 4
-        }).format(val) + ' Bs./$';
+        }).format(val) + ' Bs./€';
     }
 
     /** Hace cuánto fue actualizada */
@@ -112,7 +112,7 @@ async function initDolarWidget() {
 
         // Tooltip con fecha
         const edad = TasaDolar.getEdad();
-        widgetEl.title = `Dólar Oficial BCV: ${oficial ? oficial.toFixed(2) + ' Bs./$' : '—'}\nParalelo: ${paralelo ? paralelo.toFixed(2) + ' Bs./$' : '—'}${edad ? '\n' + edad : ''}`;
+        widgetEl.title = `Euro Oficial BCV: ${oficial ? oficial.toFixed(2) + ' Bs./€' : '—'}\nParalelo: ${paralelo ? paralelo.toFixed(2) + ' Bs./€' : '—'}${edad ? '\n' + edad : ''}`;
 
         // Animación flash al actualizar
         widgetEl.classList.add('dolar-widget--updated');
@@ -135,7 +135,7 @@ async function initDolarWidget() {
         try {
             const data = await TasaDolar.get(true); // forceRefresh
             setData(data);
-            showToast('success', 'Tasa actualizada', `BCV Oficial: ${data.oficial?.promedio?.toFixed(2)} Bs./$`);
+            showToast('success', 'Tasa actualizada', `Euro BCV Oficial: ${data.oficial?.promedio?.toFixed(2)} Bs./€`);
         } catch {
             setError();
             showToast('error', 'Sin conexión', 'No se pudo obtener la tasa del dólar');
@@ -208,7 +208,7 @@ function _insertarBadgeTasa(campoTcmmv, oficial, fechaActualizado) {
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
           </svg>
-          <span>BCV Oficial: <strong>${oficial.toFixed(2)} Bs./$</strong>${fecha ? ` · ${fecha}` : ''}</span>
+          <span>Euro BCV Oficial: <strong>${oficial.toFixed(2)} Bs./€</strong>${fecha ? ` · ${fecha}` : ''}</span>
           <button type="button" class="tasa-dolar-badge__btn" id="btn-usar-tasa" title="Usar esta tasa en el campo TCMMV">
             Usar tasa →
           </button>
@@ -218,7 +218,7 @@ function _insertarBadgeTasa(campoTcmmv, oficial, fechaActualizado) {
         document.getElementById('btn-usar-tasa')?.addEventListener('click', () => {
             campoTcmmv.value = oficial.toFixed(2);
             _calcularImporte();
-            showToast('info', 'Tasa aplicada', `TCMMV = ${oficial.toFixed(2)} Bs./$ (BCV Oficial)`);
+            showToast('info', 'Tasa aplicada', `TCMMV = ${oficial.toFixed(2)} Bs./€ (Euro BCV Oficial)`);
         });
     } else {
         badge.innerHTML = `
@@ -226,7 +226,7 @@ function _insertarBadgeTasa(campoTcmmv, oficial, fechaActualizado) {
             <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
             <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
           </svg>
-          <span style="color:var(--clr-warning)">No se pudo obtener la tasa BCV. Ingrese el valor manualmente.</span>
+          <span style="color:var(--clr-warning)">No se pudo obtener la tasa del Euro BCV. Ingrese el valor manualmente.</span>
         `;
         wrapper.appendChild(badge);
     }

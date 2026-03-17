@@ -1,5 +1,5 @@
 // netlify/functions/tasa-dolar.js
-// Proxy a ve.dolarapi.com para obtener tasas del Dólar Oficial y Paralelo BCV
+// Proxy a ve.dolarapi.com para obtener tasas del Euro Oficial (BCV) y Euro Paralelo
 // Evita problemas de CORS al llamar desde el frontend
 
 exports.handler = async (event, context) => {
@@ -16,14 +16,14 @@ exports.handler = async (event, context) => {
     }
 
     try {
-        // Obtener oficial y paralelo en paralelo
+        // Obtener Euro Oficial y Euro Paralelo en paralelo
         const [respOficial, respParalelo] = await Promise.all([
-            fetch('https://ve.dolarapi.com/v1/dolares/oficial'),
-            fetch('https://ve.dolarapi.com/v1/dolares/paralelo')
+            fetch('https://ve.dolarapi.com/v1/euros/oficial'),
+            fetch('https://ve.dolarapi.com/v1/euros/paralelo')
         ]);
 
         if (!respOficial.ok || !respParalelo.ok) {
-            throw new Error('Error al consultar DolarApi.com');
+            throw new Error('Error al consultar DolarApi.com (euros)');
         }
 
         const [oficial, paralelo] = await Promise.all([
@@ -33,19 +33,19 @@ exports.handler = async (event, context) => {
 
         const resultado = {
             oficial: {
-                promedio:  parseFloat(oficial.promedio) || null,
-                compra:    parseFloat(oficial.compra)   || null,
-                venta:     parseFloat(oficial.venta)    || null,
-                nombre:    oficial.nombre || 'Oficial (BCV)',
-                fuente:    oficial.fuente,
+                promedio:    parseFloat(oficial.promedio) || null,
+                compra:      parseFloat(oficial.compra)   || null,
+                venta:       parseFloat(oficial.venta)    || null,
+                nombre:      oficial.nombre || 'Euro Oficial (BCV)',
+                fuente:      oficial.fuente,
                 actualizado: oficial.fechaActualizacion
             },
             paralelo: {
-                promedio:  parseFloat(paralelo.promedio) || null,
-                compra:    parseFloat(paralelo.compra)   || null,
-                venta:     parseFloat(paralelo.venta)    || null,
-                nombre:    paralelo.nombre || 'Paralelo',
-                fuente:    paralelo.fuente,
+                promedio:    parseFloat(paralelo.promedio) || null,
+                compra:      parseFloat(paralelo.compra)   || null,
+                venta:       parseFloat(paralelo.venta)    || null,
+                nombre:      paralelo.nombre || 'Euro Paralelo',
+                fuente:      paralelo.fuente,
                 actualizado: paralelo.fechaActualizacion
             },
             consultadoEn: new Date().toISOString()
@@ -58,11 +58,11 @@ exports.handler = async (event, context) => {
         };
 
     } catch (error) {
-        console.error('Error consultando tasa dólar:', error);
+        console.error('Error consultando tasa euro:', error);
         return {
             statusCode: 502,
             headers,
-            body: JSON.stringify({ error: 'No se pudo obtener la tasa del dólar: ' + error.message })
+            body: JSON.stringify({ error: 'No se pudo obtener la tasa del euro: ' + error.message })
         };
     }
 };
