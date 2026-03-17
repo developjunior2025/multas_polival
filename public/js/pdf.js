@@ -299,6 +299,18 @@ function _buildPDF(multa, logoBase64) {
     doc.line(margin + 16, y + 4, margin + 30, y + 4);
     if (multa.articulo_literal) doc.text(multa.articulo_literal, margin + 17, y + 4);
 
+    y += 8;
+    // ===== TIPO DE PAGO =====
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(9);
+    doc.setTextColor(...black);
+    doc.text('Tipo de Pago:', margin, y + 4);
+    doc.setFont('helvetica', 'normal');
+    doc.setDrawColor(...gray);
+    doc.setLineWidth(0.3);
+    doc.line(margin + 28, y + 4, margin + 85, y + 4);
+    if (multa.tipo_pago) doc.text(multa.tipo_pago, margin + 29, y + 4);
+
     y += 10;
     // ===== SIGNATURES =====
     doc.setFont('helvetica', 'bold');

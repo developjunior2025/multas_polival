@@ -69,7 +69,7 @@ exports.handler = async (event, context) => {
                 nombres, apellidos, cedula, telefono, direccion_infractor,
                 marca, modelo, anio, tipo, color, matricula,
                 articulo_id, articulo_numero, articulo_literal, descripcion_infraccion,
-                valor_ut, valor_tcmmv, importe_multa_bs,
+                valor_ut, valor_tcmmv, importe_multa_bs, tipo_pago,
                 funcionario, ci_funcionario, estado,
                 numero_acta_manual
             } = body;
@@ -109,14 +109,14 @@ exports.handler = async (event, context) => {
           nombres, apellidos, cedula, telefono, direccion_infractor,
           marca, modelo, anio, tipo, color, matricula,
           articulo_id, articulo_numero, articulo_literal, descripcion_infraccion,
-          valor_ut, valor_tcmmv, importe_multa_bs,
+          valor_ut, valor_tcmmv, importe_multa_bs, tipo_pago,
           funcionario, ci_funcionario, estado
         ) VALUES (
           ${nextNum}, ${fecha}, ${hora || null}, ${turno || 'AM'}, ${direccion_infraccion},
           ${nombres}, ${apellidos}, ${cedula}, ${telefono || null}, ${direccion_infractor || null},
           ${marca || null}, ${modelo || null}, ${anio || null}, ${tipo || null}, ${color || null}, ${matricula || null},
           ${articulo_id || null}, ${articulo_numero || null}, ${articulo_literal || null}, ${descripcion_infraccion || null},
-          ${valor_ut || null}, ${valor_tcmmv || null}, ${importe_multa_bs || null},
+          ${valor_ut || null}, ${valor_tcmmv || null}, ${importe_multa_bs || null}, ${tipo_pago || null},
           ${funcionario || null}, ${ci_funcionario || null}, ${estado || 'PENDIENTE'}
         )
         RETURNING *
@@ -140,7 +140,7 @@ exports.handler = async (event, context) => {
                 nombres, apellidos, cedula, telefono, direccion_infractor,
                 marca, modelo, anio, tipo, color, matricula,
                 articulo_id, articulo_numero, articulo_literal, descripcion_infraccion,
-                valor_ut, valor_tcmmv, importe_multa_bs,
+                valor_ut, valor_tcmmv, importe_multa_bs, tipo_pago,
                 funcionario, ci_funcionario, estado
             } = body;
 
@@ -159,7 +159,7 @@ exports.handler = async (event, context) => {
           articulo_id = ${articulo_id || null}, articulo_numero = ${articulo_numero || null},
           articulo_literal = ${articulo_literal || null}, descripcion_infraccion = ${descripcion_infraccion || null},
           valor_ut = ${valor_ut || null}, valor_tcmmv = ${valor_tcmmv || null},
-          importe_multa_bs = ${importe_multa_bs || null},
+          importe_multa_bs = ${importe_multa_bs || null}, tipo_pago = ${tipo_pago || null},
           funcionario = ${funcionario || null}, ci_funcionario = ${ci_funcionario || null},
           estado = ${estado || 'PENDIENTE'}, updated_at = NOW()
         WHERE id = ${id}

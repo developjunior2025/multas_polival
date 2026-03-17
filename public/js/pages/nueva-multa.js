@@ -251,6 +251,14 @@ async function renderNuevaMulta(multaEditable = null) {
             <input type="number" class="form-control" id="f-importe" name="importe_multa_bs" 
               value="${m.importe_multa_bs || ''}" placeholder="0.00" step="0.01">
           </div>
+          <div class="form-group">
+            <label class="form-label">Tipo de Pago</label>
+            <select class="form-control" id="f-tipo-pago" name="tipo_pago">
+              <option value="">— Seleccione —</option>
+              ${['PAGO MOVIL', 'BIO PAGO', 'PUNTO DE VENTA', 'EFECTIVO']
+                .map(t => `<option value="${t}" ${m.tipo_pago === t ? 'selected' : ''}>${t}</option>`).join('')}
+            </select>
+          </div>
         </div>
       </div>
 
@@ -393,6 +401,7 @@ async function submitMultaForm(isEdit, multaId) {
             valor_ut: document.getElementById('f-ut').value || null,
             valor_tcmmv: document.getElementById('f-tcmmv').value || null,
             importe_multa_bs: document.getElementById('f-importe').value || null,
+            tipo_pago: document.getElementById('f-tipo-pago').value || null,
             funcionario: document.getElementById('f-funcionario').value.trim(),
             ci_funcionario: document.getElementById('f-ci-funcionario').value.trim(),
             estado: document.getElementById('f-estado').value,

@@ -69,6 +69,7 @@ async function initDb() {
       valor_ut DECIMAL(10, 2),
       valor_tcmmv DECIMAL(10, 2),
       importe_multa_bs DECIMAL(15, 2),
+      tipo_pago VARCHAR(50),
       
       -- Funcionario
       funcionario VARCHAR(100),
@@ -101,6 +102,11 @@ async function initDb() {
       ('valor_tcmmv', '1.00', 'Valor del TCMMV en USD'),
       ('ultimo_numero_acta', '0', 'Último número de acta generado')
     ON CONFLICT (clave) DO NOTHING
+  `;
+
+  // Migración: agregar columna tipo_pago si no existe (bases de datos existentes)
+  await sql`
+    ALTER TABLE multas ADD COLUMN IF NOT EXISTS tipo_pago VARCHAR(50)
   `;
 
   return { success: true };
