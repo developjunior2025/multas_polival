@@ -1,6 +1,30 @@
 /* js/pdf.js - PDF generation using jsPDF */
 
+function cargarImagenComoBase64(url, callback) {
+    const img = new Image();
+    img.crossOrigin = 'Anonymous';
+    img.onload = function () {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        callback(canvas.toDataURL('image/png'));
+    };
+    img.onerror = function () {
+        callback(null);
+    };
+    img.src = url;
+}
+
 function generarActaPDF(multa) {
+    // Cargar el logo y luego construir el PDF
+    cargarImagenComoBase64('/images/logo-policia.png', function (logoBase64) {
+        _buildPDF(multa, logoBase64);
+    });
+}
+
+function _buildPDF(multa, logoBase64) {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({
         orientation: 'portrait',
@@ -29,13 +53,18 @@ function generarActaPDF(multa) {
     doc.rect(margin - 4, y - 2, contentW + 8, pageH - (margin * 2) + 4);
 
     // ===== HEADER =====
-    // Shield placeholder (blue circle)
-    doc.setFillColor(...navy);
-    doc.circle(margin + 10, y + 14, 12, 'F');
-    doc.setFillColor(...gold);
-    doc.circle(margin + 10, y + 14, 9, 'F');
-    doc.setFillColor(...navy);
-    doc.circle(margin + 10, y + 14, 6, 'F');
+    // Logo institucional
+    if (logoBase64) {
+        doc.addImage(logoBase64, 'PNG', margin - 2, y, 26, 26);
+    } else {
+        // Fallback: placeholder con círculos si no carga el logo
+        doc.setFillColor(...navy);
+        doc.circle(margin + 10, y + 14, 12, 'F');
+        doc.setFillColor(...gold);
+        doc.circle(margin + 10, y + 14, 9, 'F');
+        doc.setFillColor(...navy);
+        doc.circle(margin + 10, y + 14, 6, 'F');
+    }
 
     // Header text block
     doc.setFillColor(...navy);
@@ -331,11 +360,7 @@ function generarActaPDF(multa) {
     doc.text('TELÉFONO: 0412 6710163', margin, y);
     doc.text('NÚMERO DE CUENTA CORRIENTE BANCO VENEZUELA: 0102-0358-91-00-01262119', margin + 60, y);
 
-    // Watermark
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(60);
-    doc.setTextColor(200, 210, 240);
-    doc.text('POLICÍA', pageW / 2, pageH / 2 + 20, { align: 'center', angle: -45 });
+
 
     doc.save(`Acta_${multa.numero_acta || 'nueva'}.pdf`);
     showToast('success', 'PDF generado', `Acta Nº ${multa.numero_acta} exportada correctamente`);
